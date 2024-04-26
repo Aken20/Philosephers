@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aken <aken@student.42.fr>                  #+#  +:+       +#+        */
+/*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024-04-10 07:09:29 by aken              #+#    #+#             */
-/*   Updated: 2024-04-10 07:09:29 by aken             ###   ########.fr       */
+/*   Created: 2024/04/10 07:09:29 by aken              #+#    #+#             */
+/*   Updated: 2024/04/26 04:16:13 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,23 +20,23 @@
 
 typedef struct philo
 {
-    int pilo_num;
-    int time_to_die;
-    int time_to_eat;
-    int number_of_times;
-    int time_to_sleep;
-    int time_to_think;
-    pthread_t   thread;
-    void *next_philo;
-}               t_philo;
+	int			pilo_num;
+	int			time_to_die;
+	int			time_to_eat;
+	int			number_of_times;
+	int			time_to_sleep;
+	int			time_to_think;
+	pthread_t	thread;
+	void		*next_philo;
+}				t_philo;
 
-typedef struct  threads
+typedef struct threads
 {
-    int thread_num;
-    pthread_t   thread;
-    void *next_thread;
-}               t_threads;
+	int			thread_num;
+	pthread_t	thread;
+	void		*next_thread;
+}				t_threads;
 
-long ft_atoi(char *str);
-int ft_strlen(char *str);
-void    *ft_philo(void *philo);
+long	ft_atoi(char *str);
+int		ft_strlen(char *str);
+void	*ft_philo(void *philo);
