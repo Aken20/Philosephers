@@ -6,14 +6,43 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:15 by aken              #+#    #+#             */
-/*   Updated: 2024/04/26 00:20:40 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/07 13:15:25 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	init_philo(t_philo *philo, char **av)
+void	my_usleep(int desired_sleep_us)
 {
+	struct timeval	start_time;
+	struct timeval	end_time;
+
+	gettimeofday(&start_time, 0);
+	while ((end_time.tv_usec - start_time.tv_usec) < desired_sleep_us)
+		gettimeofday(&end_time, 0);
+}
+
+int	philo_free(t_my_struct	**my_struct)
+{
+	int	i;
+
+	i = -1;
+	if (!my_struct || !*my_struct)
+		return (1);
+	while (i++ < (*my_struct)->forks)
+		free((*my_struct)->philos[i]);
+	if ((*my_struct) && (*my_struct)->philos)
+		free((*my_struct)->philos);
+	if ((*my_struct))
+		free((*my_struct));
+	return (1);
+}
+
+t_philo	*init_philo(char **av)
+{
+	t_philo	*philo;
+
+	philo = calloc(sizeof(t_philo), 1);
 	if (ft_atoi(av[1]) == 90000000000
 		|| ft_atoi(av[2]) == 90000000000
 		|| ft_atoi(av[3]) == 90000000000
@@ -30,86 +59,126 @@ void	init_philo(t_philo *philo, char **av)
 	else
 		philo->number_of_times = -1;
 	philo->time_to_think = 0;
-	printf("time_to_die %d\n", philo->time_to_die);
-	printf("time_to_eat %d\n", philo->time_to_eat);
-	printf("time_to_sleep %d\n", philo->time_to_sleep);
+	return (philo);
 }
 
-t_philo	*init_threads(int num_of_threads, char **av)
+t_my_struct	*init_threads(int num_of_threads, char **av)
 {
-	int		i;
-	t_philo	*p;
-	t_philo	*tmp;
-	t_philo	*thread;
+	int			i;
+	t_my_struct	*thread;
 
-	i = 0;
-	p = malloc(sizeof(t_philo));
-	p->next_philo = NULL;
-	p->pilo_num = i;
-	thread = p;
-	init_philo(p, av);
+	i = -1;
+	thread = calloc(sizeof(t_my_struct), 1);
+	thread->philos = calloc(sizeof(t_philo *), num_of_threads + 1);
+	pthread_mutex_init(&(thread->mutex), NULL);
+	pthread_mutex_init(&(thread->mutex_2), NULL);
+	pthread_mutex_init(&(thread->forks_mutex), NULL);
+	thread->philos[num_of_threads] = NULL;
+	thread->philo_died = false;
 	while (++i < num_of_threads)
 	{
-		tmp = malloc(sizeof(t_philo));
-		tmp->pilo_num = i;
-		init_philo(tmp, av);
-		tmp->next_philo = NULL;
-		p->next_philo = tmp;
-		p = p->next_philo;
+		thread->philos[i] = init_philo(av);
+		thread->philos[i]->pilo_num = i + 1;
 	}
-	p->next_philo = NULL;
 	return (thread);
 }
 
 void	*ft_philo(void *p)
 {
-	t_philo	*philo;
+	t_my_struct	*my_struct;
+	t_philo		*philo;
+	int			philo_num;
+	int			i = 0;
 
-	philo = (t_philo *)p;
-	printf("philo%d is waiting\n", philo->pilo_num);
-	printf("time_to_die %d\n", philo->time_to_die);
-	printf("time_to_eat %d\n", philo->time_to_eat);
-	printf("time_to_sleep %d\n", philo->time_to_sleep);
-	sleep(2);
-	printf("philo%d is done\n", philo->pilo_num);
+	my_struct = (t_my_struct *)p;
+	philo_num = my_struct->philo_num;
+	pthread_mutex_unlock(&(my_struct->mutex_2));
+	philo = my_struct->philos[philo_num];
+	while (philo->number_of_times)
+	{
+		if (my_struct->forks >= 2)
+		{
+			pthread_mutex_lock(&(my_struct->forks_mutex));
+			pthread_mutex_lock(&(my_struct->mutex));
+			gettimeofday((&my_struct->curr_time), NULL);
+			pthread_mutex_unlock(&(my_struct->mutex));
+			printf("\e[1;33m%ld :philo %d has picked up 2 forks\e[0m\n", (my_struct->curr_time.tv_usec - my_struct->start_time.tv_usec), philo->pilo_num);
+			my_struct->forks -= 2;
+			pthread_mutex_lock(&(my_struct->mutex));
+			gettimeofday((&my_struct->curr_time), NULL);
+			pthread_mutex_unlock(&(my_struct->mutex));
+			printf("\e[1;32m%ld :%d philo %d is eating\e[0m\n", (my_struct->curr_time.tv_usec - my_struct->start_time.tv_usec), i + 1, philo->pilo_num);
+			my_usleep(philo->time_to_eat);
+			philo->number_of_times--;
+			// pthread_mutex_lock(&(my_struct->forks_mutex));
+			pthread_mutex_lock(&(my_struct->mutex));
+			gettimeofday((&my_struct->curr_time), NULL);
+			pthread_mutex_unlock(&(my_struct->mutex));
+			printf("\e[1;33m%ld :philo %d has picked droped 2 forks\e[0m\n", (my_struct->curr_time.tv_usec - my_struct->start_time.tv_usec), philo->pilo_num);
+			my_struct->forks += 2;
+			// pthread_mutex_unlock(&(my_struct->forks_mutex));
+			printf("%ld :%d philo %d is sleeping\n", (my_struct->curr_time.tv_usec - my_struct->start_time.tv_usec), i++ + 1, philo->pilo_num);
+			pthread_mutex_lock(&(my_struct->mutex_2));
+			my_usleep(philo->time_to_sleep);
+			pthread_mutex_unlock(&(my_struct->mutex_2));
+			pthread_mutex_unlock(&(my_struct->forks_mutex));
+		}
+		else
+		{
+			pthread_mutex_lock(&(my_struct->forks_mutex));
+			my_usleep(philo->time_to_die);
+			if (my_struct->forks >= 2)
+			{
+				continue;
+				pthread_mutex_unlock(&(my_struct->forks_mutex));
+			}
+			else
+			{
+				pthread_mutex_lock(&(my_struct->forks_mutex));
+				// pthread_mutex_lock(&(my_struct->mutex));
+				// if (my_struct->philo_died == true)
+				// 	return (pthread_mutex_unlock(&(my_struct->mutex)), NULL);
+				// pthread_mutex_unlock(&(my_struct->mutex));
+				// my_struct->philo_died = true;
+				pthread_mutex_lock(&(my_struct->mutex));
+				gettimeofday((&my_struct->curr_time), NULL);
+				pthread_mutex_unlock(&(my_struct->mutex));
+				printf("\033[9;3;31m%ld :philo %d is died\033[0m\n", (my_struct->curr_time.tv_usec - my_struct->start_time.tv_usec), philo->pilo_num);
+				philo_free(&my_struct);
+				exit (1);
+			}
+		}
+	}
 	return (NULL);
 }
 
 int	main(int ac, char **av)
 {
-	t_philo	*tmp;
-	t_philo	*philo;
-	int		i;
-	int		num_of_philo;
+	t_my_struct	*my_struct;
+	int			i;
+	int			num_of_philo;
 
-	if (ac == 4 || ac == 5)
+	if (ac == 5 || ac == 6)
 	{
-		i = 0;
-		printf("%ld\n", ft_atoi(av[1]));
+		i = -1;
 		num_of_philo = ft_atoi(av[1]);
-		philo = init_threads(num_of_philo, av);
-		tmp = philo;
-		while (i++ < num_of_philo)
+		my_struct = init_threads(num_of_philo, av);
+		gettimeofday((&my_struct->start_time), NULL);
+		my_struct->forks = ft_atoi(av[1]);
+		while (++i < num_of_philo)
 		{
-			printf("init philo%d\n", philo->pilo_num);
-			pthread_create(&philo->thread, NULL, ft_philo, philo);
-			philo = philo->next_philo;
+			pthread_mutex_lock(&(my_struct->mutex_2));
+			my_struct->philo_num = i;
+			pthread_create(&my_struct->philos[i]->thread, NULL, ft_philo, my_struct);
 		}
-		i = 0;
-		philo = tmp;
-		while (i++ < num_of_philo)
-		{
-			pthread_join(philo->thread, NULL);
-			philo = philo->next_philo;
-		}
-		i = 0;
-		philo = tmp;
-		while (tmp)
-		{
-			philo = philo->next_philo;
-			free(tmp);
-			tmp = philo;
-		}
+		i = -1;
+		while (++i < num_of_philo)
+			pthread_join(my_struct->philos[i]->thread, NULL);
+		i = -1;
+		pthread_mutex_destroy(&(my_struct->mutex));
+		pthread_mutex_destroy(&(my_struct->mutex_2));
+		pthread_mutex_destroy(&(my_struct->forks_mutex));
+		philo_free(&my_struct);
 	}
 	return (0);
 }

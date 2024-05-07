@@ -1,6 +1,6 @@
 Name = philo
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g3
+CFLAGS = -Wall -Wextra -Werror -g3 #-fsanitize=address
 
 SRC = philo.c utils.c
 

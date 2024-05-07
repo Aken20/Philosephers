@@ -6,11 +6,13 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:29 by aken              #+#    #+#             */
-/*   Updated: 2024/04/26 04:16:13 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/07 13:10:15 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
+#include <stdbool.h>
+#include <sys/times.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/time.h>
@@ -27,15 +29,26 @@ typedef struct philo
 	int			time_to_sleep;
 	int			time_to_think;
 	pthread_t	thread;
-	void		*next_philo;
 }				t_philo;
 
-typedef struct threads
+typedef struct my_struct
 {
-	int			thread_num;
-	pthread_t	thread;
-	void		*next_thread;
-}				t_threads;
+	struct timeval	start_time;
+	struct timeval	curr_time;
+	pthread_mutex_t	mutex;
+	pthread_mutex_t	mutex_2;
+	pthread_mutex_t	forks_mutex;
+	int				forks;
+	bool			philo_died;
+	int				philo_num;
+	t_philo			**philos;
+}				t_my_struct;
+
+// typedef struct threads
+// {
+// 	int			thread_num;
+// 	pthread_t	thread;
+// }				t_threads;
 
 long	ft_atoi(char *str);
 int		ft_strlen(char *str);
