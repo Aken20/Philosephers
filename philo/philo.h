@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:29 by aken              #+#    #+#             */
-/*   Updated: 2024/05/07 13:10:15 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/11 16:13:25 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,15 @@
 
 typedef struct philo
 {
-	int			pilo_num;
-	int			time_to_die;
-	int			time_to_eat;
-	int			number_of_times;
-	int			time_to_sleep;
-	int			time_to_think;
-	pthread_t	thread;
+	int				pilo_num;
+	struct timeval	eat_time;
+	struct timeval	die_time;
+	int				time_to_die;
+	int				time_to_eat;
+	int				number_of_times;
+	int				time_to_sleep;
+	int				time_to_think;
+	pthread_t		thread;
 }				t_philo;
 
 typedef struct my_struct
