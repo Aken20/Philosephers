@@ -6,20 +6,24 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:15 by aken              #+#    #+#             */
-/*   Updated: 2024/05/11 16:36:34 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/14 21:35:03 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	my_usleep(int desired_sleep_us)
+void	my_usleep(long desired_sleep_us)
 {
 	struct timeval	start_time;
 	struct timeval	end_time;
 
 	gettimeofday(&start_time, 0);
-	while ((end_time.tv_usec - start_time.tv_usec) < desired_sleep_us)
+	gettimeofday(&end_time, 0);
+	while ((((end_time.tv_sec - start_time.tv_sec) * 1000 + (end_time.tv_usec / 1000)) - (start_time.tv_usec / 1000)) < desired_sleep_us / 1000)
+	{
+		usleep(500);
 		gettimeofday(&end_time, 0);
+	}
 }
 
 int	philo_free(t_my_struct	**my_struct)
@@ -45,15 +49,15 @@ t_philo	*init_philo(char **av)
 	philo = calloc(sizeof(t_philo), 1);
 	if (ft_atoi(av[1]) == 90000000000
 		|| ft_atoi(av[2]) == 90000000000
-		|| ft_atoi(av[3]) == 90000000000
-		|| ft_atoi(av[4]) == 90000000000)
-		exit (1);
+		|| ft_atoi(av[3]) == 90000000000 || ft_atoi(av[3]) <= 60
+		|| ft_atoi(av[4]) == 90000000000 || ft_atoi(av[4]) <= 60)
+		exit (printf("Error: invalid arguments\n"));
 	if (av[2])
-		philo->time_to_die = ft_atoi(av[2]);
+		philo->time_to_die = (1000 * ft_atoi(av[2]));
 	if (av[3])
-		philo->time_to_eat = ft_atoi(av[3]);
+		philo->time_to_eat = (1000 * ft_atoi(av[3]));
 	if (av[4])
-		philo->time_to_sleep = ft_atoi(av[4]);
+		philo->time_to_sleep = (1000 * ft_atoi(av[4]));
 	if (av[5])
 		philo->number_of_times = ft_atoi(av[5]);
 	else
@@ -83,6 +87,23 @@ t_my_struct	*init_threads(int num_of_threads, char **av)
 	return (thread);
 }
 
+int	get_phlilo_turn(t_my_struct *my_struct)
+{
+	int	j;
+
+	j = 0;
+	while (my_struct->philos[j])
+	{
+		if (my_struct->philos[j + 1]
+			&& my_struct->philos[j]->num_of_meals
+			>= my_struct->philos[j + 1]->num_of_meals)
+			j++;
+		else
+			return (j);
+	}
+	return (j);
+}
+
 void	*ft_philo(void *p)
 {
 	t_my_struct	*my_struct;
@@ -95,65 +116,50 @@ void	*ft_philo(void *p)
 	philo_num = my_struct->philo_num;
 	pthread_mutex_unlock(&(my_struct->mutex_2));
 	philo = my_struct->philos[philo_num];
-	// philo->die_time = malloc(sizeof())
+	philo->num_of_meals = 1;
+	pthread_mutex_lock(&(my_struct->mutex));
+	gettimeofday((&my_struct->curr_time), NULL);
+	gettimeofday((&philo->eat_time), NULL);
+	pthread_mutex_unlock(&(my_struct->mutex));
 	while (philo->number_of_times)
 	{
 		pthread_mutex_lock(&(my_struct->mutex));
 		gettimeofday((&my_struct->curr_time), NULL);
-		gettimeofday((&philo->eat_time), NULL);
 		pthread_mutex_unlock(&(my_struct->mutex));
 		pthread_mutex_lock(&(my_struct->forks_mutex));
-		if (my_struct->forks >= 2)
+		pthread_mutex_lock(&(my_struct->mutex_2));
+		if (my_struct->forks >= 2 && philo_num == get_phlilo_turn(my_struct))
 		{
-			printf("\e[1;33m%d :philo %d has picked up 2 forks\e[0m\n", (my_struct->curr_time.tv_usec - my_struct->start_time.tv_usec), philo->pilo_num);
+			pthread_mutex_unlock(&(my_struct->mutex_2));
 			my_struct->forks -= 2;
-			// pthread_mutex_lock(&(my_struct->mutex));
-			// gettimeofday((&my_struct->curr_time), NULL);
-			printf("\e[1;32m%d :%d philo %d is eating\e[0m\n", (my_struct->curr_time.tv_usec - my_struct->start_time.tv_usec), i + 1, philo->pilo_num);
-			// pthread_mutex_unlock(&(my_struct->mutex));
+			printf("\e[1;33m%ld :philo %d has taken a fork\e[0m\n", (((my_struct->curr_time.tv_sec - my_struct->start_time.tv_sec) * 1000 + (my_struct->curr_time.tv_usec / 1000)) - (my_struct->start_time.tv_usec / 1000)), philo->pilo_num);
+			printf("\e[1;33m%ld :philo %d has taken a fork\e[0m\n", (((my_struct->curr_time.tv_sec - my_struct->start_time.tv_sec) * 1000 + (my_struct->curr_time.tv_usec / 1000)) - (my_struct->start_time.tv_usec / 1000)), philo->pilo_num);
 			pthread_mutex_unlock(&(my_struct->forks_mutex));
+			pthread_mutex_lock(&(my_struct->mutex_2));
+			printf("\e[1;32m%ld :%d philo %d is eating\e[0m\n", (((my_struct->curr_time.tv_sec - my_struct->start_time.tv_sec) * 1000 + (my_struct->curr_time.tv_usec / 1000)) - (my_struct->start_time.tv_usec / 1000)), philo->num_of_meals, philo->pilo_num);
+			pthread_mutex_unlock(&(my_struct->mutex_2));
 			my_usleep(philo->time_to_eat);
+			gettimeofday((&philo->eat_time), NULL);
 			philo->number_of_times--;
-			// pthread_mutex_lock(&(my_struct->forks_mutex));
-			// pthread_mutex_lock(&(my_struct->mutex));
-			// gettimeofday((&my_struct->curr_time), NULL);
-			// pthread_mutex_unlock(&(my_struct->mutex));
-			printf("\e[1;33m%d :philo %d has droped 2 forks\e[0m\n", (my_struct->curr_time.tv_usec - my_struct->start_time.tv_usec), philo->pilo_num);
 			pthread_mutex_lock(&(my_struct->forks_mutex));
 			my_struct->forks += 2;
 			pthread_mutex_unlock(&(my_struct->forks_mutex));
-			// printf("%d :%d philo %d is sleeping\n", (my_struct->curr_time.tv_usec - my_struct->start_time.tv_usec), i++ + 1, philo->pilo_num);
-			// pthread_mutex_lock(&(my_struct->mutex_2));
-			// my_usleep(philo->time_to_sleep);
-			// pthread_mutex_unlock(&(my_struct->mutex_2));
-			// pthread_mutex_unlock(&(my_struct->forks_mutex));
+			pthread_mutex_lock(&(my_struct->mutex_2));
+			printf("\e[1;30m%ld :%d philo %d is sleeping\e[0m\n", (((my_struct->curr_time.tv_sec - my_struct->start_time.tv_sec) * 1000 + (my_struct->curr_time.tv_usec / 1000)) - (my_struct->start_time.tv_usec / 1000)), philo->num_of_meals++, philo->pilo_num);
+			pthread_mutex_unlock(&(my_struct->mutex_2));
+			my_usleep(philo->time_to_sleep);
 		}
 		else
 		{
-			// pthread_mutex_lock(&(my_struct->forks_mutex));
-			// pthread_mutex_lock(&(my_struct->mutex));
 			gettimeofday(&(philo->die_time), NULL);
-			// printf("%d   %d\n", (philo->die_time.tv_usec - my_struct->start_time.tv_usec),  (philo->eat_time.tv_usec - my_struct->start_time.tv_usec));
-			// pthread_mutex_unlock(&(my_struct->mutex));
-			// if (my_struct->forks >= 2)
-			// {
-			// 	continue;
-			// }
-			if ((philo->die_time.tv_usec - philo->eat_time.tv_usec) > philo->time_to_die)
+			if ((((philo->die_time.tv_sec - philo->eat_time.tv_sec) * 1000 + (philo->die_time.tv_usec / 1000)) - (philo->eat_time.tv_usec / 1000)) > philo->time_to_die / 1000)
 			{
-				// pthread_mutex_lock(&(my_struct->mutex));
-				// if (my_struct->philo_died == true)
-				// 	return (pthread_mutex_unlock(&(my_struct->mutex)), NULL);
-				// pthread_mutex_unlock(&(my_struct->mutex));
-				// my_struct->philo_died = true;
-				// pthread_mutex_lock(&(my_struct->mutex));
-				// gettimeofday((&my_struct->curr_time), NULL);
-				// pthread_mutex_unlock(&(my_struct->mutex));
-				printf("\033[9;3;31m%d :philo %d is died\033[0m\n", (my_struct->start_time.tv_usec - my_struct->start_time.tv_usec), philo->pilo_num);
+				printf("\033[9;3;31m%ld :philo %d is died\033[0m\n", (((my_struct->curr_time.tv_sec - my_struct->start_time.tv_sec) * 1000 + (my_struct->curr_time.tv_usec / 1000)) - (my_struct->start_time.tv_usec / 1000)), philo->pilo_num);
 				philo_free(&my_struct);
 				exit (1);
 			}
 		}
+		pthread_mutex_unlock(&(my_struct->mutex_2));
 		pthread_mutex_unlock(&(my_struct->forks_mutex));
 	}
 	return (NULL);
@@ -186,6 +192,7 @@ int	main(int ac, char **av)
 		pthread_mutex_destroy(&(my_struct->mutex_2));
 		pthread_mutex_destroy(&(my_struct->forks_mutex));
 		philo_free(&my_struct);
+		pthread_detach
 	}
 	return (0);
 }

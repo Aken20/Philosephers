@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:21:28 by aken              #+#    #+#             */
-/*   Updated: 2024/04/26 00:33:12 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/14 13:29:50 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,10 @@ long	ft_atoi(char *str)
 	if (str[i] >= 48 && str[i] <= 57)
 		aoi = (str[i++] - 48);
 	else
-		return (0);
+		return (90000000000);
 	while (str[i] >= 48 && str[i] <= 57 && i < 9 && aoi < __INT32_MAX__)
 		aoi = (aoi * 10) + (str[i++] - 48);
-	if (s == -1 || str[i])
+	if (s == -1 || str[i] || aoi == 0)
 		return (90000000000);
 	return (aoi * s);
 }
