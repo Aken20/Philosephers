@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:15 by aken              #+#    #+#             */
-/*   Updated: 2024/05/14 21:35:03 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/14 21:39:21 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,9 +109,7 @@ void	*ft_philo(void *p)
 	t_my_struct	*my_struct;
 	t_philo		*philo;
 	int			philo_num;
-	int			i;
 
-	i = 0;
 	my_struct = (t_my_struct *)p;
 	philo_num = my_struct->philo_num;
 	pthread_mutex_unlock(&(my_struct->mutex_2));
@@ -192,7 +190,6 @@ int	main(int ac, char **av)
 		pthread_mutex_destroy(&(my_struct->mutex_2));
 		pthread_mutex_destroy(&(my_struct->forks_mutex));
 		philo_free(&my_struct);
-		pthread_detach
 	}
 	return (0);
 }
