@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:29 by aken              #+#    #+#             */
-/*   Updated: 2024/05/14 20:19:15 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/17 05:11:31 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,12 @@ typedef struct my_struct
 // 	pthread_t	thread;
 // }				t_threads;
 
-long	ft_atoi(char *str);
-int		ft_strlen(char *str);
-void	*ft_philo(void *philo);
+long		ft_atoi(char *str);
+int			ft_strlen(char *str);
+void		*ft_philo(void *philo);
+void		my_usleep(long desired_sleep_us);
+int			philo_free(t_my_struct	**my_struct);
+t_philo		*init_philo(char **av);
+t_my_struct	*init_threads(int num_of_threads, char **av);
+
+
