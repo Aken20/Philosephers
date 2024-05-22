@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 05:04:23 by ahibrahi          #+#    #+#             */
-/*   Updated: 2024/05/17 05:15:29 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/22 13:32:15 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,21 +28,46 @@ void	my_usleep(long desired_sleep_us)
 	}
 }
 
-int	philo_free(t_my_struct	**my_struct)
+int	philo_free(t_philo	***philo)
 {
-	int	i;
+	int		i;
+	t_philo	**p;
 
-	i = -1;
-	if (!my_struct || !*my_struct)
+	if (philo == NULL)
 		return (1);
-	while (i++ < (*my_struct)->forks)
-		free((*my_struct)->philos[i]);
-	if ((*my_struct) && (*my_struct)->philos)
-		free((*my_struct)->philos);
-	if ((*my_struct))
-		free((*my_struct));
+	p = *philo;
+	i = -1;
+	if (!p || !*p)
+		return (1);
+	// while ((p[0])->my_struct->mutex_array[++i])
+	// 	free((p[0])->my_struct->mutex_array[i]);
+	// if (p->my_struct->forks)
+	// 	free(p->my_struct->forks);
+	// if (p->my_struct)
+	// 	free(p->my_struct);
+	// i = -1;
+	while (p[++i])
+		free(p[i]);
+	if (p)
+		free(p);
 	return (1);
 }
+// {
+// 	int	i;
+
+// 	i = -1;
+// 	if (!my_struct || !*my_struct)
+// 		return (1);
+// 	while (i++ < (*my_struct)->philo_num)
+// 		free((*my_struct)->philos[i]);
+// 	if ((*my_struct) && (*my_struct)->philos)
+// 		free((*my_struct)->philos);
+// 	if ((*my_struct) && (*my_struct)->mutex_array)
+// 		free((*my_struct)->mutex_array);
+// 	if ((*my_struct))
+// 		free((*my_struct));
+// 	return (1);
+// }
 
 t_philo	*init_philo(char **av)
 {
@@ -54,7 +79,8 @@ t_philo	*init_philo(char **av)
 	if (ft_atoi(av[1]) == 90000000000
 		|| ft_atoi(av[2]) == 90000000000
 		|| ft_atoi(av[3]) == 90000000000 || ft_atoi(av[3]) < 60
-		|| ft_atoi(av[4]) == 90000000000 || ft_atoi(av[4]) < 60)
+		|| ft_atoi(av[4]) == 90000000000 || ft_atoi(av[4]) < 60
+		|| ft_atoi(av[1]) <= 0)
 		return (printf("Error: invalid arguments\n"), NULL);
 	if (av[2])
 		philo->time_to_die = (1000 * ft_atoi(av[2]));
@@ -66,34 +92,61 @@ t_philo	*init_philo(char **av)
 		philo->number_of_times = ft_atoi(av[5]);
 	else
 		philo->number_of_times = -1;
+	philo->num_of_meals = 1;
 	philo->time_to_think = 0;
 	return (philo);
 }
 
-t_my_struct	*init_threads(int num_of_threads, char **av)
+
+
+t_my_struct	*init_threads(int num_of_threads)
 {
-	int			i;
 	t_my_struct	*thread;
+	int			i;
 
 	i = -1;
 	thread = calloc(sizeof(t_my_struct), 1);
 	if (!thread)
 		return (printf("Error: malloc failed\n"), NULL);
-	thread->philos = calloc(sizeof(t_philo *), num_of_threads + 1);
-	if (!thread->philos)
+	thread->forks = calloc(sizeof(int *), (num_of_threads + 1));
+	thread->philo_num = num_of_threads;
+	thread->mutex_array = calloc(sizeof(pthread_mutex_t), num_of_threads);
+	if (!thread->forks || !thread->mutex_array)
 		return (printf("Error: malloc failed\n"), NULL);
+	while (++i < num_of_threads)
+		pthread_mutex_init(&(thread->mutex_array[i]), NULL);
+	i = -1;
+	while (++i < num_of_threads)
+		thread->forks[i] = -1;
 	pthread_mutex_init(&(thread->mutex), NULL);
 	pthread_mutex_init(&(thread->mutex_2), NULL);
-	pthread_mutex_init(&(thread->forks_mutex), NULL);
-	thread->philos[num_of_threads] = NULL;
 	thread->philo_died = false;
-	while (++i < num_of_threads)
-	{
-		thread->philos[i] = init_philo(av);
-		if (!thread->philos[i])
-			return (philo_free(&thread), NULL);
-		thread->philos[i]->pilo_num = i + 1;
-	}
 	gettimeofday((&thread->start_time), NULL);
 	return (thread);
+}
+
+t_philo	**init_phils_array(int num_of_philo, char **av)
+{
+	int			i;
+	t_philo		**philos;
+	t_my_struct	*my_struct;
+
+	i = -1;
+	philos = calloc(sizeof(t_philo *), num_of_philo + 1);
+	my_struct = init_threads(num_of_philo);
+	if (!philos)
+		return (printf("Error: malloc failed\n"), NULL);
+	philos[num_of_philo] = NULL;
+	while (++i < num_of_philo)
+	{
+		philos[i] = init_philo(av);
+		philos[i]->my_struct = my_struct;
+		if (!philos[i])
+			return (philo_free(&(philos)), NULL);
+		philos[i]->pilo_num = i + 1;
+		// printf("a philo_num: %d\n", philos[i]->pilo_num);
+		// philos[i]->my_struct->forks[i] = -1;
+		// pthread_mutex_init(&(my_struct->mutex_array[i]), NULL);
+	}
+	return (philos);
 }

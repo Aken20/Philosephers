@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:29 by aken              #+#    #+#             */
-/*   Updated: 2024/05/17 05:11:31 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/22 12:22:17 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,22 @@
 #include <string.h>
 #include <pthread.h>
 
+typedef struct my_struct
+{
+	int				*forks;
+	pthread_mutex_t	*mutex_array;
+	struct timeval	start_time;
+	struct timeval	curr_time;
+	pthread_mutex_t	mutex;
+	pthread_mutex_t	mutex_2;
+	bool			philo_died;
+	int				philo_num;
+}				t_my_struct;
+
 typedef struct philo
 {
+	t_my_struct		*my_struct;
+	bool			philo_died;
 	int				pilo_num;
 	int				num_of_meals;
 	struct timeval	eat_time;
@@ -34,31 +48,13 @@ typedef struct philo
 	pthread_t		thread;
 }				t_philo;
 
-typedef struct my_struct
-{
-	struct timeval	start_time;
-	struct timeval	curr_time;
-	pthread_mutex_t	mutex;
-	pthread_mutex_t	mutex_2;
-	pthread_mutex_t	forks_mutex;
-	int				forks;
-	bool			philo_died;
-	int				philo_num;
-	t_philo			**philos;
-}				t_my_struct;
-
-// typedef struct threads
-// {
-// 	int			thread_num;
-// 	pthread_t	thread;
-// }				t_threads;
-
 long		ft_atoi(char *str);
 int			ft_strlen(char *str);
 void		*ft_philo(void *philo);
 void		my_usleep(long desired_sleep_us);
-int			philo_free(t_my_struct	**my_struct);
+int			philo_free(t_philo	***philo);
 t_philo		*init_philo(char **av);
-t_my_struct	*init_threads(int num_of_threads, char **av);
+t_my_struct	*init_threads(int num_of_threads);
+t_philo		**init_phils_array(int num_of_threads, char **av);
 
 
