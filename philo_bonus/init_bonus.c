@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 t_philo	*init_philo(char **av)
 {
@@ -52,13 +52,8 @@ t_data	*init_data(char **av)
 	if (!data)
 		return (printf("Error: malloc failed\n"), NULL);
 	data->number_of_philosophers = ft_atoi(av[1]);
-	data->forks = calloc(sizeof(int *), (data->number_of_philosophers + 1));
-	data->mutex_array = calloc(sizeof(pthread_mutex_t),
-		data->number_of_philosophers);
-	if (!data->forks || !data->mutex_array)
-		return (printf("Error: malloc failed\n"), NULL);
-	while (++i < data->number_of_philosophers)
-		pthread_mutex_init(&(data->mutex_array[i]), NULL);
+	data->forks = sem_open("forks", O_RDWR);
+	data->pids = calloc(sizeof(int), (data->number_of_philosophers + 1));
 	i = -1;
 	while (++i < data->number_of_philosophers)
 		data->forks[i] = -1;

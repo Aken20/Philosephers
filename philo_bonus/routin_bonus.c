@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "philo.h"
+#include "philo_bonus.h"
 
 void	taking_forks(t_philo *philo)
 {

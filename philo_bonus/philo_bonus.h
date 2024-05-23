@@ -16,16 +16,16 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <fcntl.h>
 #include <sys/wait.h>
-#include <pthread.h>
+#include <semaphore.h>
 
 typedef struct data
 {
-	int				*forks;
-	pthread_mutex_t	*mutex_array;
-	pthread_mutex_t	mutex;
-	pthread_mutex_t	checkin_death_m;
+	sem_t			*forks;
+	sem_t			*checkin_death_m;
 	int				philo_died;
+	int				*pids;
 	int				number_of_philosophers;
 }				t_data;
 
@@ -42,7 +42,6 @@ typedef struct philo
 	long			time_to_eat;
 	long			number_of_times;
 	long			time_to_sleep;
-	pthread_t		thread;
 }				t_philo;
 
 long		ft_atoi(char *str);
@@ -66,5 +65,3 @@ void		ft_putnbr_fd(long n, int fd);
 t_philo		*init_philo(char **av);
 t_data		*init_data(char **av);
 t_philo		**init_philo_array(t_data *data, char **av);
-
-

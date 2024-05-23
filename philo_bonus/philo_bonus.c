@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 void	unlock_forks(t_data *data, int id)
 {
@@ -144,12 +144,10 @@ int	main(int ac, char **av)
 			return (1);
 		while (++i < data->number_of_philosophers)
 		{
-			pthread_create(&(philo_array[i]->thread),
-				NULL, routin, philo_array[i]);
+			philo_array[i]->ID = fork();
+			if (philo_array[i]->ID == 0)
+				routin(philo_array[i]);
 		}
-		i = -1;
-		while (++i < data->number_of_philosophers)
-			pthread_join(philo_array[i]->thread, NULL);
 		ft_exit(philo_array);
 	}
 	return (0);
