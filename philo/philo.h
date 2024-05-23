@@ -20,26 +20,25 @@
 #include <string.h>
 #include <pthread.h>
 
-typedef struct my_struct
+typedef struct data
 {
 	int				*forks;
 	pthread_mutex_t	*mutex_array;
-	struct timeval	start_time;
-	struct timeval	curr_time;
 	pthread_mutex_t	mutex;
-	pthread_mutex_t	mutex_2;
-	bool			philo_died;
-	int				philo_num;
-}				t_my_struct;
+	pthread_mutex_t	checkin_death_m;
+	int				philo_died;
+	int				number_of_philosophers;
+}				t_data;
 
 typedef struct philo
 {
-	t_my_struct		*my_struct;
+	t_data		*data;
 	bool			philo_died;
 	int				pilo_num;
 	int				num_of_meals;
 	struct timeval	eat_time;
-	struct timeval	die_time;
+	struct timeval	start_time;
+	struct timeval	curr_time;
 	long			time_to_die;
 	long			time_to_eat;
 	long			number_of_times;
@@ -49,12 +48,24 @@ typedef struct philo
 }				t_philo;
 
 long		ft_atoi(char *str);
+void		ft_putstr_fd(char *str, int fd);
 int			ft_strlen(char *str);
-void		*ft_philo(void *philo);
+void		*routin(void *philo);
 void		my_usleep(long desired_sleep_us);
-int			philo_free(t_philo	***philo);
+int			free_philo_array(t_philo **philo);
+void		free_data(t_data *data);
+bool		check_death(t_data *data);
+void		unlock_forks(t_data *data, int id);
+bool		check_forks(t_data *data, int id);
+void		taking_forks(t_philo *philo);
+void		eating(t_philo *philo);
+void		sleeping(t_philo *philo);
+long		get_time_cal(struct timeval *curr_time,
+				struct timeval *start_time);
+void		thinking(t_philo *philo);
+void		*routin(void *p);
 t_philo		*init_philo(char **av);
-t_my_struct	*init_threads(int num_of_threads);
-t_philo		**init_phils_array(int num_of_threads, char **av);
+t_data		*init_data(char **av);
+t_philo		**init_phils_array(t_data *data, char **av);
 
 

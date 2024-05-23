@@ -50,3 +50,34 @@ long	ft_atoi(char *str)
 		return (90000000000);
 	return (aoi * s);
 }
+
+void	ft_putstr_fd(char *str, int fd)
+{
+	int	i;
+
+	i = 0;
+	while(str && str[i])
+		write(fd, &str[i],1);
+}
+
+long	get_time_cal(struct timeval *curr_time, struct timeval *start_time)
+{
+	return (((curr_time->tv_sec - start_time->tv_sec) * 1000
+			+ ((curr_time->tv_usec - start_time->tv_usec) / 1000)));
+}
+
+void	my_usleep(long desired_sleep_us)
+{
+	struct timeval	start_time;
+	struct timeval	end_time;
+
+	gettimeofday(&start_time, 0);
+	gettimeofday(&end_time, 0);
+	while ((((end_time.tv_sec - start_time.tv_sec) * 1000
+				+(end_time.tv_usec / 1000)) - (start_time.tv_usec / 1000))
+		< desired_sleep_us / 1000)
+	{
+		usleep(500);
+		gettimeofday(&end_time, 0);
+	}
+}
