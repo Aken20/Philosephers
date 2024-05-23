@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:21:28 by aken              #+#    #+#             */
-/*   Updated: 2024/05/14 13:29:50 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/23 16:36:29 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ void	ft_putstr_fd(char *str, int fd)
 	int	i;
 
 	i = 0;
-	while(str && str[i])
-		write(fd, &str[i++],1);
+	while (str && str[i])
+		write(fd, &str[i++], 1);
 }
 
 long	get_time_cal(struct timeval *curr_time, struct timeval *start_time)

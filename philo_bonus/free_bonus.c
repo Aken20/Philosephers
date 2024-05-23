@@ -1,25 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   free_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aken <aken@student.42.fr>                  #+#  +:+       +#+        */
+/*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024-05-23 01:12:20 by aken              #+#    #+#             */
-/*   Updated: 2024-05-23 01:12:20 by aken             ###   ########.fr       */
+/*   Created: 2024/05/23 01:12:20 by aken              #+#    #+#             */
+/*   Updated: 2024/05/23 18:29:08 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-void free_data(t_data *data)
+void	free_data(t_data *data)
 {
-	int i;
-
-	i = -1;
 	if (!data)
 		return ;
-	pthread_mutex_destroy(&(data->checkin_death_m));
+	if (data->forks)
+	{
+		sem_close(data->forks);
+		sem_unlink("forks");
+	}
+	if (data->checkin_death_m)
+	{
+		sem_close(data->checkin_death_m);
+		sem_unlink("checkin_death_m");
+	}
 	if (data)
 		free(data);
 }

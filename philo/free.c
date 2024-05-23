@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aken <aken@student.42.fr>                  #+#  +:+       +#+        */
+/*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024-05-23 01:12:20 by aken              #+#    #+#             */
-/*   Updated: 2024-05-23 01:12:20 by aken             ###   ########.fr       */
+/*   Created: 2024/05/23 01:12:20 by aken              #+#    #+#             */
+/*   Updated: 2024/05/23 16:31:29 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "philo.h"
+#include "philo.h"
 
-void free_data(t_data *data)
+void	free_data(t_data *data)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	if (!data)
@@ -42,4 +42,27 @@ int	free_philo_array(t_philo	**philo_array)
 		free(philo_array[i]);
 	free(philo_array);
 	return (1);
+}
+
+void	ft_exit(t_philo **philo_array)
+{
+	int	i;
+
+	if (philo_array[0]->data->philo_died)
+	{
+		i = philo_array[0]->data->philo_died - 1;
+		ft_putstr_fd("\033[9;3;31m", 2);
+		ft_putnbr_fd(get_time_cal(&philo_array[i]->curr_time,
+				&philo_array[i]->start_time), 2);
+		ft_putstr_fd(" ", 2);
+		ft_putnbr_fd(philo_array[0]->data->philo_died, 2);
+		ft_putstr_fd(" died\033[0m\n", 2);
+		free_philo_array(philo_array);
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		free_philo_array(philo_array);
+		exit(EXIT_SUCCESS);
+	}
 }

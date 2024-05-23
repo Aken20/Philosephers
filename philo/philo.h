@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:29 by aken              #+#    #+#             */
-/*   Updated: 2024/05/22 12:22:17 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/23 16:35:51 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ typedef struct philo
 {
 	t_data			*data;
 	bool			philo_died;
-	int				ID;
+	int				id;
 	int				num_of_meals;
 	struct timeval	eat_time;
 	struct timeval	start_time;
@@ -52,6 +52,7 @@ void		*routin(void *philo);
 void		my_usleep(long desired_sleep_us);
 int			free_philo_array(t_philo **philo);
 void		free_data(t_data *data);
+void		ft_exit(t_philo **philo_array);
 bool		check_death(t_data *data);
 void		unlock_forks(t_data *data, int id);
 bool		check_forks(t_data *data, int id);
@@ -66,5 +67,4 @@ void		ft_putnbr_fd(long n, int fd);
 t_philo		*init_philo(char **av);
 t_data		*init_data(char **av);
 t_philo		**init_philo_array(t_data *data, char **av);
-
-
+void		set_dead(t_data *data, int id);

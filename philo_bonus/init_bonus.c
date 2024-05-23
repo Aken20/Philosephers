@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init.c                                             :+:      :+:    :+:   */
+/*   init_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 05:04:23 by ahibrahi          #+#    #+#             */
-/*   Updated: 2024/05/22 13:32:15 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/23 18:59:03 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,9 @@ t_data	*init_data(char **av)
 	if (!data)
 		return (printf("Error: malloc failed\n"), NULL);
 	data->number_of_philosophers = ft_atoi(av[1]);
-	data->forks = sem_open("forks", O_RDWR);
+	data->forks = sem_open("forks", O_RDWR, 777, data->number_of_philosophers);
+	data->checkin_death_m = sem_open("checkin_death_m", O_RDWR, 777, 1);
 	data->pids = calloc(sizeof(int), (data->number_of_philosophers + 1));
-	i = -1;
-	while (++i < data->number_of_philosophers)
-		data->forks[i] = -1;
-	pthread_mutex_init(&(data->checkin_death_m), NULL);
 	data->philo_died = 0;
 	return (data);
 }
@@ -74,11 +71,12 @@ t_philo	**init_philo_array(t_data *data, char **av)
 	philo_array[data->number_of_philosophers] = NULL;
 	while (++i < data->number_of_philosophers)
 	{
+		printf("philo_array[%d]\n", i);
 		philo_array[i] = init_philo(av);
 		philo_array[i]->data = data;
 		if (!philo_array[i])
 			return (free_philo_array(philo_array), NULL);
-		philo_array[i]->ID = i + 1;
+		philo_array[i]->id = i + 1;
 	}
 	return (philo_array);
 }

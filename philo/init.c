@@ -6,11 +6,18 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 05:04:23 by ahibrahi          #+#    #+#             */
-/*   Updated: 2024/05/22 13:32:15 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/23 16:35:33 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	set_dead(t_data *data, int id)
+{
+	pthread_mutex_lock(&(data->checkin_death_m));
+	data->philo_died = id;
+	pthread_mutex_unlock(&(data->checkin_death_m));
+}
 
 t_philo	*init_philo(char **av)
 {
@@ -44,17 +51,14 @@ t_data	*init_data(char **av)
 
 	i = -1;
 	if (ft_atoi(av[1]) == 90000000000 || ft_atoi(av[1]) <= 0)
-	{
-		printf("%s\n", av[1]);
-		exit(EXIT_FAILURE);
-	}
+		exit(printf("%s\n", av[1]));
 	data = calloc(sizeof(t_data), 1);
 	if (!data)
 		return (printf("Error: malloc failed\n"), NULL);
 	data->number_of_philosophers = ft_atoi(av[1]);
 	data->forks = calloc(sizeof(int *), (data->number_of_philosophers + 1));
 	data->mutex_array = calloc(sizeof(pthread_mutex_t),
-		data->number_of_philosophers);
+			data->number_of_philosophers);
 	if (!data->forks || !data->mutex_array)
 		return (printf("Error: malloc failed\n"), NULL);
 	while (++i < data->number_of_philosophers)
@@ -83,7 +87,7 @@ t_philo	**init_philo_array(t_data *data, char **av)
 		philo_array[i]->data = data;
 		if (!philo_array[i])
 			return (free_philo_array(philo_array), NULL);
-		philo_array[i]->ID = i + 1;
+		philo_array[i]->id = i + 1;
 	}
 	return (philo_array);
 }

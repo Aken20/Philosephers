@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.h                                            :+:      :+:    :+:   */
+/*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:29 by aken              #+#    #+#             */
-/*   Updated: 2024/05/22 12:22:17 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/23 19:01:46 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,9 @@ typedef struct philo
 {
 	t_data			*data;
 	bool			philo_died;
-	int				ID;
+	int				id;
+	sem_t			*forks;
+	sem_t			*checkin_death_m;
 	int				num_of_meals;
 	struct timeval	eat_time;
 	struct timeval	start_time;
@@ -53,7 +55,7 @@ int			free_philo_array(t_philo **philo);
 void		free_data(t_data *data);
 bool		check_death(t_data *data);
 void		unlock_forks(t_data *data, int id);
-bool		check_forks(t_data *data, int id);
+bool		check_forks(t_philo *philo, int id);
 void		taking_forks(t_philo *philo);
 void		eating(t_philo *philo);
 void		sleeping(t_philo *philo);
