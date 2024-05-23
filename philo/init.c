@@ -6,17 +6,21 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 05:04:23 by ahibrahi          #+#    #+#             */
-/*   Updated: 2024/05/23 16:35:33 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/23 20:43:24 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	set_dead(t_data *data, int id)
+void	set_dead(t_philo *philo, int id)
 {
-	pthread_mutex_lock(&(data->checkin_death_m));
-	data->philo_died = id;
-	pthread_mutex_unlock(&(data->checkin_death_m));
+	if (get_time_cal(&philo->curr_time, &philo->eat_time)
+		> philo->time_to_die / 1000)
+	{
+		pthread_mutex_lock(&(philo->data->checkin_death_m));
+		philo->data->philo_died = id;
+		pthread_mutex_unlock(&(philo->data->checkin_death_m));
+	}
 }
 
 t_philo	*init_philo(char **av)

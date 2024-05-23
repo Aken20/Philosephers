@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:29 by aken              #+#    #+#             */
-/*   Updated: 2024/05/23 16:35:51 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/23 20:43:46 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,4 @@ void		ft_putnbr_fd(long n, int fd);
 t_philo		*init_philo(char **av);
 t_data		*init_data(char **av);
 t_philo		**init_philo_array(t_data *data, char **av);
-void		set_dead(t_data *data, int id);
+void		set_dead(t_philo *philo, int id);

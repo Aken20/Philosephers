@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 00:34:00 by aken              #+#    #+#             */
-/*   Updated: 2024/05/23 16:34:57 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/23 20:45:37 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,10 @@ void	eating(t_philo *philo)
 		get_time_cal(&philo->curr_time, &philo->start_time),
 		philo->id);
 	my_usleep(philo->time_to_eat);
-	// gettimeofday((&philo->curr_time), NULL);
-	// printf("\e[1;32m%ld %d has ate %d\e[0m\n",
-	// 	get_time_cal(&philo->curr_time, &philo->start_time),
-	// 	philo->id, philo->num_of_meals++);
+	gettimeofday((&philo->curr_time), NULL);
+	printf("\e[1;32m%ld %d has ate %d\e[0m\n",
+		get_time_cal(&philo->curr_time, &philo->start_time),
+		philo->id, philo->num_of_meals++);
 	unlock_forks(philo->data, philo->id - 1);
 	gettimeofday((&philo->eat_time), NULL);
 	philo->number_of_times--;
@@ -79,7 +79,7 @@ void	*routin(void *p)
 			thinking(philo);
 		}
 		else
-			set_dead(data, philo->id);
+			set_dead(philo, philo->id);
 	}
 	return (NULL);
 }

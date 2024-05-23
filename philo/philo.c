@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:15 by aken              #+#    #+#             */
-/*   Updated: 2024/05/23 16:31:29 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/23 20:40:14 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	unlock_forks(t_data *data, int id)
 	}
 }
 
-void	chech_for_last_philo(t_data *data, int id)
+bool	chech_for_last_philo(t_data *data, int id)
 {
 	// pthread_mutex_unlock(&(data->mutex));
 	pthread_mutex_lock(&(data->mutex_array[id]));
@@ -61,6 +61,7 @@ void	chech_for_last_philo(t_data *data, int id)
 		pthread_mutex_unlock(&(data->mutex_array[0]));
 	}
 	pthread_mutex_unlock(&(data->mutex_array[id]));
+	return (false);
 }
 
 bool	check_forks(t_data *data, int id)
@@ -69,7 +70,7 @@ bool	check_forks(t_data *data, int id)
 	// printf("philo_num: %d\n", data->philo_num);
 	// pthread_mutex_lock(&(data->mutex));
 	if (id == (data->number_of_philosophers - 1))
-		chech_for_last_philo(data, id);
+		return (chech_for_last_philo(data, id));
 	else
 	{
 		// pthread_mutex_unlock(&(data->mutex));
@@ -87,6 +88,8 @@ bool	check_forks(t_data *data, int id)
 			}
 			pthread_mutex_unlock(&(data->mutex_array[id + 1]));
 		}
+		else
+			set_dead(data, id);
 		pthread_mutex_unlock(&(data->mutex_array[id]));
 	}
 	return (false);
