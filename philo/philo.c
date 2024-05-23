@@ -93,17 +93,20 @@ void	ft_exit(t_philo **philo_array)
 {
 	int i;
 
-	i = philo_array[0]->data->philo_died;
-	if (i)
+	i = philo_array[0]->data->philo_died - 1;
+	if (i != -1)
 	{
 		printf("\033[9;3;31m%ld %d died\033[0m\n",
 			get_time_cal(&philo_array[i]->curr_time, &philo_array[i]->start_time),
-			i);
+			i + 1);
 		free_philo_array(philo_array);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
-	free_philo_array(philo_array);
-	exit(0);
+	else
+	{
+		free_philo_array(philo_array);
+		exit(EXIT_SUCCESS);
+	}
 }
 
 bool check_death(t_data *data)
@@ -129,7 +132,11 @@ int	main(int ac, char **av)
 		i = -1;
 		data = init_data(av);
 		if (data->number_of_philosophers > 200)
-			(ft_putstr_fd("Do Not Enter More than 200", STDERR_FILENO), exit(EXIT_FAILURE));
+		{	
+			ft_putstr_fd("Do Not Enter More than 200", STDERR_FILENO);
+			free_data(data);
+			exit(EXIT_FAILURE);
+		}
 		philo_array = init_phils_array(data, av);
 		if (!philo_array)
 			return (1);

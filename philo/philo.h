@@ -43,7 +43,6 @@ typedef struct philo
 	long			time_to_eat;
 	long			number_of_times;
 	long			time_to_sleep;
-	long			time_to_think;
 	pthread_t		thread;
 }				t_philo;
 

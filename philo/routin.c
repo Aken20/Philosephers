@@ -67,9 +67,9 @@ void	*routin(void *p)
 	gettimeofday((&philo->eat_time), NULL);
 	while (philo->number_of_times)
 	{
+		gettimeofday(&(philo->curr_time), NULL);
 		if (check_death(philo->data) == true)
 			return (NULL);
-		gettimeofday((&philo->curr_time), NULL);
 		if (check_forks(data, philo->pilo_num - 1) == true)
 		{
 			taking_forks(philo);
@@ -79,7 +79,6 @@ void	*routin(void *p)
 		}
 		else
 		{
-			gettimeofday(&(philo->curr_time), NULL);
 			if (get_time_cal(&philo->curr_time, &philo->eat_time)
 				> philo->time_to_die / 1000)
 			{
@@ -88,7 +87,6 @@ void	*routin(void *p)
 				pthread_mutex_unlock(&(philo->data->checkin_death_m));
 			}
 		}
-		gettimeofday(&(philo->curr_time), NULL);
 	}
 	return (NULL);
 }

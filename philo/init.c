@@ -34,7 +34,6 @@ t_philo	*init_philo(char **av)
 	else
 		philo->number_of_times = -1;
 	philo->num_of_meals = 1;
-	philo->time_to_think = 0;
 	return (philo);
 }
 
