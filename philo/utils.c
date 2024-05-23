@@ -57,7 +57,7 @@ void	ft_putstr_fd(char *str, int fd)
 
 	i = 0;
 	while(str && str[i])
-		write(fd, &str[i],1);
+		write(fd, &str[i++],1);
 }
 
 long	get_time_cal(struct timeval *curr_time, struct timeval *start_time)

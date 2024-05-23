@@ -2,7 +2,7 @@ Name = philo
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
-SRC = philo.c utils.c init.c routin.c free.c
+SRC = philo.c utils.c init.c routin.c free.c ft_putnbr_fd.c
 
 OBJ = $(SRC:%.c=%.o)
 

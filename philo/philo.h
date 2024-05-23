@@ -63,6 +63,7 @@ long		get_time_cal(struct timeval *curr_time,
 				struct timeval *start_time);
 void		thinking(t_philo *philo);
 void		*routin(void *p);
+void		ft_putnbr_fd(long n, int fd);
 t_philo		*init_philo(char **av);
 t_data		*init_data(char **av);
 t_philo		**init_phils_array(t_data *data, char **av);

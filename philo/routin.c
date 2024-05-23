@@ -48,9 +48,10 @@ void	eating(t_philo *philo)
 		get_time_cal(&philo->curr_time, &philo->start_time),
 		philo->pilo_num);
 	my_usleep(philo->time_to_eat);
-	printf("\e[1;32m%ld %d has ate %d\e[0m\n",
-		get_time_cal(&philo->curr_time, &philo->start_time),
-		philo->pilo_num, philo->num_of_meals++);
+	// gettimeofday((&philo->curr_time), NULL);
+	// printf("\e[1;32m%ld %d has ate %d\e[0m\n",
+	// 	get_time_cal(&philo->curr_time, &philo->start_time),
+	// 	philo->pilo_num, philo->num_of_meals++);
 	unlock_forks(philo->data, philo->pilo_num - 1);
 	gettimeofday((&philo->eat_time), NULL);
 	philo->number_of_times--;

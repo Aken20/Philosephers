@@ -14,11 +14,11 @@
 
 void	unlock_forks(t_data *data, int id)
 {
-	pthread_mutex_lock(&(data->mutex));
+	// pthread_mutex_lock(&(data->mutex));
 	if (id == (data->number_of_philosophers - 1))
 	{
 		// printf("philo num = %d\n", data->philo_num);
-		pthread_mutex_unlock(&(data->mutex));
+		// pthread_mutex_unlock(&(data->mutex));
 		pthread_mutex_lock(&(data->mutex_array[id]));
 		// printf("fork id = %d  --  %d was taken it\n", id, data->forks[id]);
 		data->forks[id] = -1;
@@ -30,7 +30,7 @@ void	unlock_forks(t_data *data, int id)
 	}
 	else
 	{
-		pthread_mutex_unlock(&(data->mutex));
+		// pthread_mutex_unlock(&(data->mutex));
 		pthread_mutex_lock(&(data->mutex_array[id]));
 		// printf("fork id = %d  --  %d was taken it\n", id, data->forks[id]);
 		data->forks[id] = -1;
@@ -46,10 +46,10 @@ bool	check_forks(t_data *data, int id)
 {
 	// printf("id: %d\n", id);
 	// printf("philo_num: %d\n", data->philo_num);
-	pthread_mutex_lock(&(data->mutex));
+	// pthread_mutex_lock(&(data->mutex));
 	if (id == (data->number_of_philosophers - 1))
 	{
-		pthread_mutex_unlock(&(data->mutex));
+		// pthread_mutex_unlock(&(data->mutex));
 		pthread_mutex_lock(&(data->mutex_array[id]));
 		if (data->forks[id] == -1)
 		{
@@ -69,7 +69,7 @@ bool	check_forks(t_data *data, int id)
 	}
 	else
 	{
-		pthread_mutex_unlock(&(data->mutex));
+		// pthread_mutex_unlock(&(data->mutex));
 		pthread_mutex_lock(&(data->mutex_array[id]));
 		if (data->forks[id] == -1)
 		{
@@ -93,12 +93,14 @@ void	ft_exit(t_philo **philo_array)
 {
 	int i;
 
-	i = philo_array[0]->data->philo_died - 1;
-	if (i != -1)
+	if (philo_array[0]->data->philo_died)
 	{
-		printf("\033[9;3;31m%ld %d died\033[0m\n",
-			get_time_cal(&philo_array[i]->curr_time, &philo_array[i]->start_time),
-			i + 1);
+		i = philo_array[0]->data->philo_died - 1;
+		ft_putstr_fd("\033[9;3;31m", 2);
+		ft_putnbr_fd(get_time_cal(&philo_array[i]->curr_time, &philo_array[i]->start_time), 2);
+		ft_putstr_fd(" ", 2);
+		ft_putnbr_fd(philo_array[0]->data->philo_died, 2);
+		ft_putstr_fd(" died\033[0m\n", 2);
 		free_philo_array(philo_array);
 		exit(EXIT_FAILURE);
 	}
