@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:29 by aken              #+#    #+#             */
-/*   Updated: 2024/05/23 20:43:46 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/26 14:16:23 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 
 typedef struct data
 {
-	int				*forks;
+	int				**forks;
 	pthread_mutex_t	*mutex_array;
 	pthread_mutex_t	mutex;
 	pthread_mutex_t	checkin_death_m;
@@ -49,13 +49,13 @@ long		ft_atoi(char *str);
 void		ft_putstr_fd(char *str, int fd);
 int			ft_strlen(char *str);
 void		*routin(void *philo);
-void		my_usleep(long desired_sleep_us);
+void		my_usleep(long desired_sleep_us, t_philo *philo);
 int			free_philo_array(t_philo **philo);
 void		free_data(t_data *data);
 void		ft_exit(t_philo **philo_array);
 bool		check_death(t_data *data);
 void		unlock_forks(t_data *data, int id);
-bool		check_forks(t_data *data, int id);
+bool		check_forks(t_data *data, int id, t_philo *philo);
 void		taking_forks(t_philo *philo);
 void		eating(t_philo *philo);
 void		sleeping(t_philo *philo);
@@ -68,3 +68,4 @@ t_philo		*init_philo(char **av);
 t_data		*init_data(char **av);
 t_philo		**init_philo_array(t_data *data, char **av);
 void		set_dead(t_philo *philo, int id);
+bool		single_philo(t_philo *philo);

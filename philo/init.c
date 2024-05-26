@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 05:04:23 by ahibrahi          #+#    #+#             */
-/*   Updated: 2024/05/23 20:43:24 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/26 13:57:16 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,21 +55,25 @@ t_data	*init_data(char **av)
 
 	i = -1;
 	if (ft_atoi(av[1]) == 90000000000 || ft_atoi(av[1]) <= 0)
-		exit(printf("%s\n", av[1]));
-	data = calloc(sizeof(t_data), 1);
+		exit(EXIT_FAILURE);
+	data = malloc(sizeof(t_data));
 	if (!data)
 		return (printf("Error: malloc failed\n"), NULL);
 	data->number_of_philosophers = ft_atoi(av[1]);
-	data->forks = calloc(sizeof(int *), (data->number_of_philosophers + 1));
-	data->mutex_array = calloc(sizeof(pthread_mutex_t),
-			data->number_of_philosophers);
+	data->forks = malloc(sizeof(int **) * (data->number_of_philosophers + 1));
+	data->mutex_array = malloc(sizeof(pthread_mutex_t)
+			* data->number_of_philosophers);
 	if (!data->forks || !data->mutex_array)
 		return (printf("Error: malloc failed\n"), NULL);
 	while (++i < data->number_of_philosophers)
 		pthread_mutex_init(&(data->mutex_array[i]), NULL);
 	i = -1;
 	while (++i < data->number_of_philosophers)
-		data->forks[i] = -1;
+	{
+		data->forks[i] = malloc(sizeof(int) * 2);
+		data->forks[i][0] = -1;
+		data->forks[i][1] = -1;
+	}
 	pthread_mutex_init(&(data->checkin_death_m), NULL);
 	data->philo_died = 0;
 	return (data);
@@ -81,7 +85,7 @@ t_philo	**init_philo_array(t_data *data, char **av)
 	t_philo		**philo_array;
 
 	i = -1;
-	philo_array = calloc(sizeof(t_philo *), data->number_of_philosophers + 1);
+	philo_array = malloc(sizeof(t_philo *) * data->number_of_philosophers + 1);
 	if (!philo_array)
 		return (printf("Error: malloc failed\n"), NULL);
 	philo_array[data->number_of_philosophers] = NULL;

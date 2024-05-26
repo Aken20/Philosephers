@@ -6,92 +6,22 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:15 by aken              #+#    #+#             */
-/*   Updated: 2024/05/23 20:40:14 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/26 14:16:07 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	unlock_forks(t_data *data, int id)
+bool	single_philo(t_philo *philo)
 {
-	// pthread_mutex_lock(&(data->mutex));
-	if (id == (data->number_of_philosophers - 1))
-	{
-		// printf("philo num = %d\n", data->philo_num);
-		// pthread_mutex_unlock(&(data->mutex));
-		pthread_mutex_lock(&(data->mutex_array[id]));
-		// printf("fork id = %d - %d was taken it\n", id, data->forks[id]);
-		data->forks[id] = -1;
-		pthread_mutex_unlock(&(data->mutex_array[id]));
-		pthread_mutex_lock(&(data->mutex_array[0]));
-		// printf("fork id = %d - %d was taken it\n", 0, data->forks[0]);
-		data->forks[0] = -1;
-		pthread_mutex_unlock(&(data->mutex_array[0]));
-	}
-	else
-	{
-		// pthread_mutex_unlock(&(data->mutex));
-		pthread_mutex_lock(&(data->mutex_array[id]));
-		// printf("fork id = %d - %d was taken it\n", id, data->forks[id]);
-		data->forks[id] = -1;
-		pthread_mutex_unlock(&(data->mutex_array[id]));
-		pthread_mutex_lock(&(data->mutex_array[id + 1]));
-	// printf("fork id = %d - %d was taken it\n", id + 1, data->forks[id + 1]);
-		data->forks[id + 1] = -1;
-		pthread_mutex_unlock(&(data->mutex_array[id + 1]));
-	}
-}
-
-bool	chech_for_last_philo(t_data *data, int id)
-{
-	// pthread_mutex_unlock(&(data->mutex));
-	pthread_mutex_lock(&(data->mutex_array[id]));
-	if (data->forks[id] == -1)
-	{
-		// printf("id: %d\n", id);
-		pthread_mutex_lock(&(data->mutex_array[0]));
-		if (data->forks[0] == -1)
-		{
-			data->forks[0] = id;
-			data->forks[id] = id;
-			pthread_mutex_unlock(&(data->mutex_array[id]));
-			pthread_mutex_unlock(&(data->mutex_array[0]));
-			return (true);
-		}
-		pthread_mutex_unlock(&(data->mutex_array[0]));
-	}
-	pthread_mutex_unlock(&(data->mutex_array[id]));
-	return (false);
-}
-
-bool	check_forks(t_data *data, int id)
-{
-	// printf("id: %d\n", id);
-	// printf("philo_num: %d\n", data->philo_num);
-	// pthread_mutex_lock(&(data->mutex));
-	if (id == (data->number_of_philosophers - 1))
-		return (chech_for_last_philo(data, id));
-	else
-	{
-		// pthread_mutex_unlock(&(data->mutex));
-		pthread_mutex_lock(&(data->mutex_array[id]));
-		if (data->forks[id] == -1)
-		{
-			pthread_mutex_lock(&(data->mutex_array[id + 1]));
-			if (data->forks[id + 1] == -1)
-			{
-				data->forks[id + 1] = id;
-				data->forks[id] = id;
-				pthread_mutex_unlock(&(data->mutex_array[id + 1]));
-				pthread_mutex_unlock(&(data->mutex_array[id]));
-				return (true);
-			}
-			pthread_mutex_unlock(&(data->mutex_array[id + 1]));
-		}
-		else
-			set_dead(data, id);
-		pthread_mutex_unlock(&(data->mutex_array[id]));
-	}
+	gettimeofday((&philo->curr_time), NULL);
+	printf("\e[1;33m%ld %d has taken a fork\e[0m\n",
+		get_time_cal(&philo->curr_time, &philo->start_time),
+		philo->id);
+	my_usleep(philo->time_to_die, philo);
+	pthread_mutex_lock(&(philo->data->checkin_death_m));
+	philo->data->philo_died = philo->id;
+	pthread_mutex_unlock(&(philo->data->checkin_death_m));
 	return (false);
 }
 
