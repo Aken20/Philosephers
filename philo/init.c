@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 05:04:23 by ahibrahi          #+#    #+#             */
-/*   Updated: 2024/05/26 13:57:16 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/26 21:54:33 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,18 @@ void	set_dead(t_philo *philo, int id)
 		philo->data->philo_died = id;
 		pthread_mutex_unlock(&(philo->data->checkin_death_m));
 	}
+}
+
+int	*alloc_forks(void)
+{
+	int		*forks;
+
+	forks = malloc(sizeof(int) * 2);
+	if (!forks)
+		return (printf("Error: malloc failed\n"), NULL);
+	forks[0] = -1;
+	forks[1] = -1;
+	return (forks);
 }
 
 t_philo	*init_philo(char **av)
@@ -69,12 +81,9 @@ t_data	*init_data(char **av)
 		pthread_mutex_init(&(data->mutex_array[i]), NULL);
 	i = -1;
 	while (++i < data->number_of_philosophers)
-	{
-		data->forks[i] = malloc(sizeof(int) * 2);
-		data->forks[i][0] = -1;
-		data->forks[i][1] = -1;
-	}
+		data->forks[i] = alloc_forks();
 	pthread_mutex_init(&(data->checkin_death_m), NULL);
+	pthread_mutex_init(&(data->mutex), NULL);
 	data->philo_died = 0;
 	return (data);
 }
@@ -85,10 +94,10 @@ t_philo	**init_philo_array(t_data *data, char **av)
 	t_philo		**philo_array;
 
 	i = -1;
-	philo_array = malloc(sizeof(t_philo *) * data->number_of_philosophers + 1);
+	philo_array = malloc(sizeof(t_philo *)
+			* (data->number_of_philosophers + 1));
 	if (!philo_array)
 		return (printf("Error: malloc failed\n"), NULL);
-	philo_array[data->number_of_philosophers] = NULL;
 	while (++i < data->number_of_philosophers)
 	{
 		philo_array[i] = init_philo(av);
@@ -97,5 +106,6 @@ t_philo	**init_philo_array(t_data *data, char **av)
 			return (free_philo_array(philo_array), NULL);
 		philo_array[i]->id = i + 1;
 	}
+	philo_array[i] = NULL;
 	return (philo_array);
 }

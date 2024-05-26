@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 01:12:20 by aken              #+#    #+#             */
-/*   Updated: 2024/05/26 12:53:02 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/26 21:27:45 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,22 +20,29 @@ void	free_data(t_data *data)
 	if (!data)
 		return ;
 	pthread_mutex_destroy(&(data->checkin_death_m));
+	pthread_mutex_destroy(&(data->mutex));
 	while (++i < data->number_of_philosophers)
 		pthread_mutex_destroy(&(data->mutex_array[i]));
 	if (data->mutex_array)
 		free(data->mutex_array);
+	i = -1;
+	while (++i < data->number_of_philosophers)
+	{
+		if (data->forks[i])
+			free(data->forks[i]);
+	}
 	if (data->forks)
 		free(data->forks);
 	if (data)
 		free(data);
 }
 
-int	free_philo_array(t_philo	**philo_array)
+int	free_philo_array(t_philo **philo_array)
 {
 	int		i;
 
 	i = -1;
-	if (philo_array == NULL)
+	if (philo_array == NULL || philo_array[0] == NULL)
 		return (1);
 	free_data(philo_array[0]->data);
 	while (philo_array[++i])

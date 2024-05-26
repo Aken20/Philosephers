@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:15 by aken              #+#    #+#             */
-/*   Updated: 2024/05/26 15:36:27 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/26 21:15:31 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,12 @@
 
 bool	single_philo(t_philo *philo)
 {
+	pthread_mutex_lock(&(philo->data->mutex));
 	gettimeofday((&philo->curr_time), NULL);
 	printf("\e[1;33m%ld %d has taken a fork\e[0m\n",
 		get_time_cal(&philo->curr_time, &philo->start_time),
 		philo->id);
+	pthread_mutex_unlock(&(philo->data->mutex));
 	my_usleep(philo->time_to_die, philo);
 	pthread_mutex_lock(&(philo->data->checkin_death_m));
 	philo->data->philo_died = philo->id;

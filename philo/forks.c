@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:17:50 by ahibrahi          #+#    #+#             */
-/*   Updated: 2024/05/26 15:29:23 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/26 21:05:44 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ bool	chech_for_last_philo(t_data *data, int id)
 			data->forks[0][1] = id;
 			data->forks[id][0] = id;
 			data->forks[id][1] = id;
-			pthread_mutex_unlock(&(data->mutex_array[0]));
 			pthread_mutex_unlock(&(data->mutex_array[id]));
+			pthread_mutex_unlock(&(data->mutex_array[0]));
 			return (true);
 		}
 		pthread_mutex_unlock(&(data->mutex_array[0]));
@@ -70,8 +70,8 @@ bool	chech_for_last_philo_odd(t_data *data, int id, t_philo *philo)
 			data->forks[0][1] = id;
 			data->forks[id][0] = id;
 			data->forks[id][1] = id;
-			pthread_mutex_unlock(&(data->mutex_array[0]));
 			pthread_mutex_unlock(&(data->mutex_array[id]));
+			pthread_mutex_unlock(&(data->mutex_array[0]));
 			return (true);
 		}
 		pthread_mutex_unlock(&(data->mutex_array[id]));

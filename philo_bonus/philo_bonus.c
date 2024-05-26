@@ -6,77 +6,23 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:15 by aken              #+#    #+#             */
-/*   Updated: 2024/05/23 19:00:58 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/26 19:08:04 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-// void	unlock_forks(t_data *data, int id)
-// {
-// 	// pthread_mutex_lock(&(data->mutex));
-// 	if (id == (data->number_of_philosophers - 1))
-// 	{
-// 		// printf("philo num = %d\n", data->philo_num);
-// 		// pthread_mutex_unlock(&(data->mutex));
-// 		pthread_mutex_lock(&(data->mutex_array[id]));
-// 		// printf("fork id = %d  --  %d was taken it\n", id, data->forks[id]);
-// 		data->forks[id] = -1;
-// 		pthread_mutex_unlock(&(data->mutex_array[id]));
-// 		pthread_mutex_lock(&(data->mutex_array[0]));
-// 		// printf("fork id = %d  --  %d was taken it\n", 0, data->forks[0]);
-// 		data->forks[0] = -1;
-// 		pthread_mutex_unlock(&(data->mutex_array[0]));
-// 	}
-// 	else
-// 	{
-// 		// pthread_mutex_unlock(&(data->mutex));
-// 		pthread_mutex_lock(&(data->mutex_array[id]));
-// 		// printf("fork id = %d  --  %d was taken it\n", id, data->forks[id]);
-// 		data->forks[id] = -1;
-// 		pthread_mutex_unlock(&(data->mutex_array[id]));
-// 		pthread_mutex_lock(&(data->mutex_array[id + 1]));
-// 		// printf("fork id = %d  --  %d was taken it\n", id + 1, data->forks[id + 1]);
-// 		data->forks[id + 1] = -1;
-// 		pthread_mutex_unlock(&(data->mutex_array[id + 1]));
-// 	}
-// }
-
-bool	check_forks(t_philo *philo, int id)
+void	unlock_forks(t_philo *philo)
 {
-	// printf("id: %d\n", id);
-	// printf("philo_num: %d\n", data->philo_num);
-	// pthread_mutex_lock(&(data->mutex));
-	sem_wait(philo->forks);
-	if ((*philo->forks) >= 0)
-	{
-		id++;
-		printf("philo->forks: %d\n", (*philo->forks));
-		(*philo->forks)--;
-		(*philo->forks)--;
-		printf("philo->forks: %d\n", (*philo->forks));
-		sem_post(philo->forks);
-		// pthread_mutex_unlock(&(data->mutex));
-		// pthread_mutex_lock(&(data->mutex_array[id]));
-		// if (data->forks[id] == -1)
-		// {
-		// 	// printf("id: %d\n", id);
-		// 	pthread_mutex_lock(&(data->mutex_array[0]));
-		// 	if (data->forks[0] == -1)
-		// 	{
-		// 		data->forks[0] = id;
-		// 		data->forks[id] = id;
-		// 		pthread_mutex_unlock(&(data->mutex_array[id]));
-		// 		pthread_mutex_unlock(&(data->mutex_array[0]));
-				exit (false);
-		// 	}
-		// 	pthread_mutex_unlock(&(data->mutex_array[0]));
-		// }
-		// pthread_mutex_unlock(&(data->mutex_array[id]));
-	}
-	sem_post(philo->forks);
-	exit (true);
-	return (false);
+	sem_post(philo->data->forks);
+	sem_post(philo->data->forks);
+}
+
+bool	check_forks(t_philo *philo)
+{
+	sem_wait(philo->data->forks);
+	sem_wait(philo->data->forks);
+	return (true);
 }
 
 void	ft_exit(t_philo **philo_array)
@@ -86,12 +32,12 @@ void	ft_exit(t_philo **philo_array)
 	if (philo_array[0]->data->philo_died)
 	{
 		i = philo_array[0]->data->philo_died - 1;
-		ft_putstr_fd("\033[9;3;31m", 2);
+		ft_putstr_fd("\033[9;3;31m", 1);
 		ft_putnbr_fd(get_time_cal(&philo_array[i]->curr_time,
-				&philo_array[i]->start_time), 2);
-		ft_putstr_fd(" ", 2);
-		ft_putnbr_fd(philo_array[0]->data->philo_died, 2);
-		ft_putstr_fd(" died\033[0m\n", 2);
+				&philo_array[i]->start_time), 1);
+		ft_putstr_fd(" ", 1);
+		ft_putnbr_fd(philo_array[0]->data->philo_died, 1);
+		ft_putstr_fd(" died\033[0m\n", 1);
 		free_philo_array(philo_array);
 		exit(EXIT_FAILURE);
 	}
@@ -104,13 +50,8 @@ void	ft_exit(t_philo **philo_array)
 
 bool	check_death(t_data *data)
 {
-	// pthread_mutex_lock(&(data->checkin_death_m));
 	if (data->philo_died != 0)
-	{
-		// pthread_mutex_unlock(&(data->checkin_death_m));
 		return (true);
-	}
-	// pthread_mutex_unlock(&(data->checkin_death_m));
 	return (false);
 }
 
@@ -137,8 +78,20 @@ int	main(int ac, char **av)
 		{
 			philo_array[i]->id = fork();
 			if (philo_array[i]->id == 0)
-				routin(philo_array[i]);
+			{
+				philo_array[i]->id = i + 1;
+				if (routin(philo_array[i]) == false)
+				{
+					i = -1;
+					while (++i < data->number_of_philosophers)
+						kill(philo_array[i]->id, SIGKILL);
+					ft_exit(philo_array);
+				}
+			}
 		}
+		i = -1;
+		while (++i < data->number_of_philosophers)
+			waitpid(philo_array[i]->id, NULL, 0);
 		ft_exit(philo_array);
 	}
 	return (0);

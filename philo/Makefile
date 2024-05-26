@@ -1,6 +1,6 @@
 Name = philo
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g3
 
 SRC = philo.c utils.c init.c routin.c free.c ft_putnbr_fd.c forks.c
 
