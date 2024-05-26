@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:15 by aken              #+#    #+#             */
-/*   Updated: 2024/05/26 14:16:07 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/26 15:36:27 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,6 @@ int	main(int ac, char **av)
 	{
 		i = -1;
 		data = init_data(av);
-		if (data->number_of_philosophers > 200)
-		{
-			ft_putstr_fd("Do Not Enter More than 200", STDERR_FILENO);
-			(free_data(data), exit(EXIT_FAILURE));
-		}
 		philo_array = init_philo_array(data, av);
 		if (!philo_array)
 			return (1);
