@@ -73,11 +73,9 @@ bool	eating(t_philo *philo)
 
 bool	routin(void *p)
 {
-	t_data		*data;
 	t_philo		*philo;
 
 	philo = (t_philo *)p;
-	data = philo->data;
 	gettimeofday((&philo->start_time), NULL);
 	gettimeofday((&philo->eat_time), NULL);
 	while (philo->number_of_times)
@@ -96,7 +94,7 @@ bool	routin(void *p)
 		}
 		else
 			if (set_dead(philo, philo->id) == false)
-				return (false);
+				exit (false);
 	}
 	return (true);
 }

@@ -81,17 +81,22 @@ int	main(int ac, char **av)
 			{
 				philo_array[i]->id = i + 1;
 				if (routin(philo_array[i]) == false)
-				{
-					i = -1;
-					while (++i < data->number_of_philosophers)
-						kill(philo_array[i]->id, SIGKILL);
 					ft_exit(philo_array);
-				}
 			}
 		}
 		i = -1;
 		while (++i < data->number_of_philosophers)
+		{
 			waitpid(philo_array[i]->id, NULL, 0);
+			if (WIFEXITED(philo_array[++i]->id) && WEXITSTATUS(philo_array[i]->id))
+			{
+				while (++i < data->number_of_philosophers)
+					kill(philo_array[i]->id, SIGKILL);
+				ft_exit(philo_array);
+				return (1);
+			}
+			ft_exit(philo_array);
+		}
 		ft_exit(philo_array);
 	}
 	return (0);

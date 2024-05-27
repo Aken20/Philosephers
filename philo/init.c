@@ -39,7 +39,7 @@ t_philo	*init_philo(char **av)
 {
 	t_philo	*philo;
 
-	philo = calloc(sizeof(t_philo), 1);
+	philo = malloc(sizeof(t_philo));
 	if (!philo)
 		return (printf("Error: malloc failed\n"), NULL);
 	if (ft_atoi(av[2]) == 90000000000

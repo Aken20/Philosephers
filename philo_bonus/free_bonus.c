@@ -16,6 +16,8 @@ void	free_data(t_data *data)
 {
 	if (!data)
 		return ;
+	if (data->pids)
+		free(data->pids);
 	if (data->forks)
 	{
 		sem_close(data->forks);

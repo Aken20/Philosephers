@@ -21,7 +21,7 @@ bool	set_dead(t_philo *philo, int id)
 		philo->data->philo_died = id;
 		printf("\e[1;31m%ld %d died\e[0m\n",
 			get_time_cal(&philo->curr_time, &philo->start_time), id);
-		return (false);
+		exit (EXIT_FAILURE);
 	}
 	return (true);
 }
@@ -30,7 +30,7 @@ t_philo	*init_philo(char **av)
 {
 	t_philo	*philo;
 
-	philo = calloc(sizeof(t_philo), 1);
+	philo = malloc(sizeof(t_philo));
 	if (!philo)
 		return (printf("Error: malloc failed\n"), NULL);
 	if (ft_atoi(av[2]) == 90000000000
@@ -54,15 +54,13 @@ t_philo	*init_philo(char **av)
 t_data	*init_data(char **av)
 {
 	t_data		*data;
-	int			i;
 
-	i = -1;
 	if (ft_atoi(av[1]) == 90000000000 || ft_atoi(av[1]) <= 0)
 	{
 		printf("%s\n", av[1]);
 		exit(EXIT_FAILURE);
 	}
-	data = calloc(sizeof(t_data), 1);
+	data = malloc(sizeof(t_data));
 	if (!data)
 		return (printf("Error: malloc failed\n"), NULL);
 	data->number_of_philosophers = ft_atoi(av[1]);
@@ -86,7 +84,7 @@ t_philo	**init_philo_array(t_data *data, char **av)
 	t_philo		**philo_array;
 
 	i = -1;
-	philo_array = calloc(sizeof(t_philo *), data->number_of_philosophers + 1);
+	philo_array = malloc(sizeof(t_philo *) * (data->number_of_philosophers + 1));
 	if (!philo_array)
 		return (printf("Error: malloc failed\n"), NULL);
 	philo_array[data->number_of_philosophers] = NULL;
