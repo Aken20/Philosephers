@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 01:12:20 by aken              #+#    #+#             */
-/*   Updated: 2024/05/23 18:29:08 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/27 22:07:42 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,11 @@ void	free_data(t_data *data)
 	{
 		sem_close(data->checkin_death_m);
 		sem_unlink("checkin_death_m");
+	}
+	if (data->terminit_child)
+	{
+		sem_close(data->terminit_child);
+		sem_unlink("terminit_child");
 	}
 	if (data)
 		free(data);

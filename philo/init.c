@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 05:04:23 by ahibrahi          #+#    #+#             */
-/*   Updated: 2024/05/26 21:54:33 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/28 08:42:26 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	set_dead(t_philo *philo, int id)
 	}
 }
 
-int	*alloc_forks(void)
+int	*alloc_forks(int num)
 {
 	int		*forks;
 
@@ -31,7 +31,10 @@ int	*alloc_forks(void)
 	if (!forks)
 		return (printf("Error: malloc failed\n"), NULL);
 	forks[0] = -1;
-	forks[1] = -1;
+	if (num % 2 && num != 0)
+		forks[1] = num - 1;
+	else
+		forks[1] = -1;
 	return (forks);
 }
 
@@ -67,7 +70,7 @@ t_data	*init_data(char **av)
 
 	i = -1;
 	if (ft_atoi(av[1]) == 90000000000 || ft_atoi(av[1]) <= 0)
-		exit(EXIT_FAILURE);
+		exit(1);
 	data = malloc(sizeof(t_data));
 	if (!data)
 		return (printf("Error: malloc failed\n"), NULL);
@@ -81,7 +84,7 @@ t_data	*init_data(char **av)
 		pthread_mutex_init(&(data->mutex_array[i]), NULL);
 	i = -1;
 	while (++i < data->number_of_philosophers)
-		data->forks[i] = alloc_forks();
+		data->forks[i] = alloc_forks(i);
 	pthread_mutex_init(&(data->checkin_death_m), NULL);
 	pthread_mutex_init(&(data->mutex), NULL);
 	data->philo_died = 0;

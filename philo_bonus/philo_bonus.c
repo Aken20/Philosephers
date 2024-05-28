@@ -6,11 +6,49 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:15 by aken              #+#    #+#             */
-/*   Updated: 2024/05/26 19:08:04 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/28 08:42:54 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
+
+void	*check(void *p)
+{
+	t_philo		*philo;
+
+	philo = (t_philo *)p;
+	sem_wait(philo->data->terminit_child);
+	free_data(philo->data);
+	free(philo);
+	exit(1);
+}
+
+void	my_waitpid(t_data *data)
+{
+	int	i;
+
+	while (1)
+	{
+		i = -1;
+		while (++i < data->number_of_philosophers)
+		{
+			// waitpid(data->pids[i], NULL, 0);
+			if (WIFEXITED(data->pids[i]))
+			{
+				printf("i: %d\n", data->pids[i]);
+				if (WEXITSTATUS(data->pids[i]))
+				{
+					i = -1;
+					printf("i: %d\n", WEXITSTATUS(data->pids[i]));
+					while (++i < data->number_of_philosophers)
+						sem_post(data->terminit_child);
+					return ;
+				}
+				return ;
+			}
+		}
+	}
+}
 
 void	unlock_forks(t_philo *philo)
 {
@@ -39,12 +77,12 @@ void	ft_exit(t_philo **philo_array)
 		ft_putnbr_fd(philo_array[0]->data->philo_died, 1);
 		ft_putstr_fd(" died\033[0m\n", 1);
 		free_philo_array(philo_array);
-		exit(EXIT_FAILURE);
+		exit(1);
 	}
 	else
 	{
 		free_philo_array(philo_array);
-		exit(EXIT_SUCCESS);
+		exit(0);
 	}
 }
 
@@ -69,7 +107,7 @@ int	main(int ac, char **av)
 		{
 			ft_putstr_fd("Do Not Enter More than 200", STDERR_FILENO);
 			free_data(data);
-			exit(EXIT_FAILURE);
+			exit(1);
 		}
 		philo_array = init_philo_array(data, av);
 		if (!philo_array)
@@ -80,23 +118,17 @@ int	main(int ac, char **av)
 			if (philo_array[i]->id == 0)
 			{
 				philo_array[i]->id = i + 1;
-				if (routin(philo_array[i]) == false)
-					ft_exit(philo_array);
+				pthread_create(&(philo_array[i]->check_death), NULL,
+					check, philo_array[i]);
+				pthread_create(&(philo_array[i]->routin_thread), NULL,
+					routin, philo_array[i]);
+				pthread_join(philo_array[i]->check_death, NULL);
+				pthread_join(philo_array[i]->routin_thread, NULL);
+				exit(0);
 			}
+			// data->pids[i] = philo_array[i]->id;
 		}
-		i = -1;
-		while (++i < data->number_of_philosophers)
-		{
-			waitpid(philo_array[i]->id, NULL, 0);
-			if (WIFEXITED(philo_array[++i]->id) && WEXITSTATUS(philo_array[i]->id))
-			{
-				while (++i < data->number_of_philosophers)
-					kill(philo_array[i]->id, SIGKILL);
-				ft_exit(philo_array);
-				return (1);
-			}
-			ft_exit(philo_array);
-		}
+		my_waitpid(data);
 		ft_exit(philo_array);
 	}
 	return (0);

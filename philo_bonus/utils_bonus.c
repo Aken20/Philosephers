@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:21:28 by aken              #+#    #+#             */
-/*   Updated: 2024/05/26 19:00:21 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/27 22:30:06 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ long	get_time_cal(struct timeval *curr_time, struct timeval *start_time)
 			+ ((curr_time->tv_usec - start_time->tv_usec) / 1000)));
 }
 
-bool	my_usleep(long desired_sleep_us, t_philo *philo)
+void	my_usleep(long desired_sleep_us, t_philo *philo)
 {
 	struct timeval	start_time;
 	struct timeval	end_time;
@@ -77,10 +77,8 @@ bool	my_usleep(long desired_sleep_us, t_philo *philo)
 				+(end_time.tv_usec / 1000)) - (start_time.tv_usec / 1000))
 		< desired_sleep_us / 1000)
 	{
-		if (set_dead(philo, philo->id) == false)
-			return (false);
+		set_dead(philo, philo->id);
 		usleep(500);
 		gettimeofday(&end_time, 0);
 	}
-	return (true);
 }

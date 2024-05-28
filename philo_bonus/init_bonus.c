@@ -6,13 +6,13 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 05:04:23 by ahibrahi          #+#    #+#             */
-/*   Updated: 2024/05/26 18:59:10 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/28 08:42:26 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-bool	set_dead(t_philo *philo, int id)
+void	set_dead(t_philo *philo, int id)
 {
 	if (get_time_cal(&philo->curr_time, &philo->eat_time)
 		> philo->time_to_die / 1000)
@@ -21,9 +21,8 @@ bool	set_dead(t_philo *philo, int id)
 		philo->data->philo_died = id;
 		printf("\e[1;31m%ld %d died\e[0m\n",
 			get_time_cal(&philo->curr_time, &philo->start_time), id);
-		exit (EXIT_FAILURE);
+		exit (1);
 	}
-	return (true);
 }
 
 t_philo	*init_philo(char **av)
@@ -58,7 +57,7 @@ t_data	*init_data(char **av)
 	if (ft_atoi(av[1]) == 90000000000 || ft_atoi(av[1]) <= 0)
 	{
 		printf("%s\n", av[1]);
-		exit(EXIT_FAILURE);
+		exit(1);
 	}
 	data = malloc(sizeof(t_data));
 	if (!data)
@@ -66,11 +65,12 @@ t_data	*init_data(char **av)
 	data->number_of_philosophers = ft_atoi(av[1]);
 	sem_unlink("forks");
 	sem_unlink("checkin_death_m");
-	printf("number_of_philosophers: %d\n", data->number_of_philosophers);
+	sem_unlink("terminit_child");
 	data->forks = sem_open("forks", O_CREAT, 0644, data->number_of_philosophers);
 	if (data->forks == SEM_FAILED)
 		perror("Error: sem_open failed\n");
 	data->checkin_death_m = sem_open("checkin_death_m", O_CREAT, 0644, 1);
+	data->terminit_child = sem_open("terminit_child", O_CREAT, 0644, 0);
 	if (data->checkin_death_m == SEM_FAILED)
 		perror("Error: sem_open failed\n");
 	data->pids = malloc(sizeof(int) * data->number_of_philosophers);

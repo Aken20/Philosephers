@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 01:12:20 by aken              #+#    #+#             */
-/*   Updated: 2024/05/26 21:27:45 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/28 19:34:10 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,18 +58,18 @@ void	ft_exit(t_philo **philo_array)
 	if (philo_array[0]->data->philo_died)
 	{
 		i = philo_array[0]->data->philo_died - 1;
-		ft_putstr_fd("\033[9;3;31m", 1);
+		ft_putstr_fd("\033[9;3;2;31m", 1);
 		ft_putnbr_fd(get_time_cal(&philo_array[i]->curr_time,
 				&philo_array[i]->start_time), 1);
 		ft_putstr_fd(" ", 1);
 		ft_putnbr_fd(philo_array[0]->data->philo_died, 1);
 		ft_putstr_fd(" died\033[0m\n", 1);
 		free_philo_array(philo_array);
-		exit(EXIT_FAILURE);
+		exit(1);
 	}
 	else
 	{
 		free_philo_array(philo_array);
-		exit(EXIT_SUCCESS);
+		exit(0);
 	}
 }

@@ -1,6 +1,6 @@
 Name = philo_bonus
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g3 -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -g3
 
 SRC = philo_bonus.c utils_bonus.c init_bonus.c routin_bonus.c free_bonus.c ft_putnbr_fd.c
 

@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:09:15 by aken              #+#    #+#             */
-/*   Updated: 2024/05/26 21:15:31 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/28 08:23:26 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,9 @@ bool	single_philo(t_philo *philo)
 	printf("\e[1;33m%ld %d has taken a fork\e[0m\n",
 		get_time_cal(&philo->curr_time, &philo->start_time),
 		philo->id);
-	pthread_mutex_unlock(&(philo->data->mutex));
 	my_usleep(philo->time_to_die, philo);
+	gettimeofday((&philo->curr_time), NULL);
+	pthread_mutex_unlock(&(philo->data->mutex));
 	pthread_mutex_lock(&(philo->data->checkin_death_m));
 	philo->data->philo_died = philo->id;
 	pthread_mutex_unlock(&(philo->data->checkin_death_m));
@@ -53,8 +54,10 @@ int	main(int ac, char **av)
 		if (!philo_array)
 			return (1);
 		while (++i < data->number_of_philosophers)
+		{
 			pthread_create(&(philo_array[i]->thread),
 				NULL, routin, philo_array[i]);
+		}
 		i = -1;
 		while (++i < data->number_of_philosophers)
 			pthread_join(philo_array[i]->thread, NULL);
