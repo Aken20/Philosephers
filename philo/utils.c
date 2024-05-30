@@ -6,7 +6,7 @@
 /*   By: ahibrahi <ahibrahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 07:21:28 by aken              #+#    #+#             */
-/*   Updated: 2024/05/28 09:03:50 by ahibrahi         ###   ########.fr       */
+/*   Updated: 2024/05/30 08:10:58 by ahibrahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,10 @@ void	ft_putstr_fd(char *str, int fd)
 		write(fd, &str[i++], 1);
 }
 
-long	get_time_cal(struct timeval *curr_time, struct timeval *start_time)
+long	get_time_cal(struct timeval curr_time, struct timeval start_time)
 {
-	return (((curr_time->tv_sec - start_time->tv_sec) * 1000
-			+ ((curr_time->tv_usec - start_time->tv_usec) / 1000)));
+	return (((curr_time.tv_sec - start_time.tv_sec) * 1000
+			+ ((curr_time.tv_usec - start_time.tv_usec) / 1000)));
 }
 
 void	my_usleep(long desired_sleep_us, t_philo *philo)
@@ -73,15 +73,14 @@ void	my_usleep(long desired_sleep_us, t_philo *philo)
 
 	gettimeofday(&start_time, 0);
 	gettimeofday(&end_time, 0);
-	while ((((end_time.tv_sec - start_time.tv_sec) * 1000
-				+(end_time.tv_usec / 1000)) - (start_time.tv_usec / 1000))
-		< desired_sleep_us / 1000)
+	desired_sleep_us /= 1000;
+	while (get_time_cal(end_time, start_time) < desired_sleep_us)
 	{
-		usleep(500);
-		if (get_time_cal(&philo->curr_time, &philo->eat_time)
-			> philo->time_to_die / 1000)
+		usleep(250);
+		if (get_time_cal(end_time, philo->eat_time)
+			> (philo->time_to_die / 1000))
 		{
-			set_dead(philo, philo->id);
+			set_dead(philo);
 			return ;
 		}
 		gettimeofday(&end_time, 0);
